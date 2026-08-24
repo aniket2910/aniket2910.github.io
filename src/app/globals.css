@@ -1,26 +1,561 @@
 @import "tailwindcss";
 
+/* Lenis smooth scroll */
+html {
+  overflow-x: clip;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Manual dark mode via a `.dark` class on <html> (with system default set in the head script). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Spider-Verse core ramp (motion spec §1.1) */
+  --void: #180834;
+  --deep: #3e0e80;
+  --dimension: #8c18a8;
+  --pulse: #e43c96; /* primary accent / CTAs */
+  --blush: #ffa0cd; /* highlight / hover */
+  --cyan: #28dcff; /* ONLY as chroma offset / rim — never a fill */
+  --red: #ff283c; /* ONLY as chroma offset / rim — never a fill */
+  --ink: #16081c;
+  --paper: #f4e8dc;
+
+  /* neutral editorial base (kept for readability / engineering-first) */
+  --background: #fbfbfa;
+  --surface: #ffffff;
+  --foreground: #18181b;
+  --muted: #71717a;
+  --border: #e7e5e4;
+
+  /* mapped accents */
+  --accent: var(--pulse);
+  --accent-fg: #ffffff;
+  --accent-2: var(--cyan);
+
+  /* motion tokens (spec §1.3) */
+  --t-instant: 80ms;
+  --t-quick: 160ms;
+  --t-base: 280ms;
+  --t-panel: 450ms;
+  --t-scene: 800ms;
+  --ease-snap: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-thwip: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-impact: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+.dark {
+  --background: #0a0a0b;
+  --surface: #131315;
+  --foreground: #ededed;
+  --muted: #8b8b93;
+  --border: #26262b;
+  --accent: #f24fa6;
+  --accent-fg: #0a0a0b;
+  --accent-2: #5fe4ff;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-2: var(--accent-2);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jbmono);
+  --font-display: var(--font-anton);
+  --font-sfx: var(--font-bangers);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Registered custom properties so they can animate (spec §2.1, §2.2). */
+@property --chroma {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+@property --dot-size {
+  syntax: "<length>";
+  initial-value: 6px;
+  inherits: true;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* clip (not hidden) so reveal transforms/halftone can't create a horizontal
+     scrollbar, without turning body into a scroll container (keeps sticky). */
+  overflow-x: clip;
+}
+
+/* Subtle halftone dot texture across the whole UI. Fixed, theme-aware, and
+   painted behind content; opaque dark "dimension" sections cover it and supply
+   their own dots. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -50%; /* oversize so the 45° rotation has no bald corners */
+  transform: rotate(45deg);
+  pointer-events: none;
+  background-image: radial-gradient(var(--foreground) 1.1px, transparent 1.2px);
+  background-size: 6px 6px;
+  opacity: 0.05;
+}
+
+/* Anything clickable shows the pointer cursor. */
+button:not(:disabled),
+a[href],
+label,
+summary,
+[role="button"],
+[data-press] {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* Load-in animation, disabled for reduced-motion users. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  /* stepped = "animate on twos", the Spider-Verse signature (spec §0.1) */
+  animation: rise 0.6s steps(12, end) both;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Subtle Ben-Day halftone texture for section backgrounds. */
+.halftone {
+  background-image: radial-gradient(var(--color-border) 1px, transparent 1.5px);
+  background-size: 14px 14px;
+}
+
+/* Comic chromatic glitch on hover — coral/blue fringe on the title. */
+.glitch-hover {
+  transition: text-shadow 0.15s ease;
+}
+.group:hover .glitch-hover {
+  text-shadow:
+    1.5px 0 0 var(--color-accent),
+    -1.5px 0 0 var(--color-accent-2);
+}
+
+/* Comic onomatopoeia burst spawned on click. */
+.comic-burst {
+  position: fixed;
+  z-index: 100;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  font-family: var(--font-sfx), var(--font-sans), sans-serif;
+  -webkit-text-stroke: 2px #0a0a0b;
+  paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--accent-2);
+  animation: comic-pop 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes comic-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3) rotate(-12deg);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1.15) rotate(-6deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(1) rotate(-6deg);
+  }
+}
+
+/* Comic route transition: a coral halftone panel that wipes across. */
+.comic-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--void);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+/* scanline tear */
+.comic-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.07) 0 2px,
+    transparent 2px 6px
+  );
+  mix-blend-mode: overlay;
+}
+/* chroma-rip edges: colours fully separate at top/bottom */
+.comic-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 0 7px 0 var(--cyan),
+    inset 0 -7px 0 var(--red);
+  opacity: 0.85;
+}
+.comic-panel span {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-sfx), sans-serif;
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow:
+    -3px 0 var(--red),
+    3px 0 var(--cyan);
+}
+.comic-cover {
+  transform-origin: bottom;
+  animation: panel-cover 0.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+.comic-reveal {
+  transform-origin: top;
+  animation: panel-reveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes panel-cover {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes panel-reveal {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+/* Scroll reveal: hidden until in view, with directional variants. */
+.reveal-scroll {
+  opacity: 0;
+  transition:
+    opacity 0.5s steps(12, end),
+    transform 0.5s steps(12, end);
+}
+.reveal-scroll.rs-up {
+  transform: translateY(24px);
+}
+.reveal-scroll.rs-left {
+  transform: translateX(-28px);
+}
+.reveal-scroll.rs-right {
+  transform: translateX(28px);
+}
+.reveal-scroll.rs-draw {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+.reveal-scroll.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Sparing RGB split on hover — hero title + logo (a signature moment). */
+.rgb-title {
+  transition: text-shadow 0.18s ease;
+}
+.rgb-title:hover {
+  text-shadow:
+    -2px 0 0 var(--color-accent),
+    2px 0 0 var(--color-accent-2);
+}
+
+/* --- Spec primitives (§2) --- */
+
+/* Halftone surface: bigger dots = more out-of-focus (halftone replaces blur). */
+.halftone-surface {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.halftone-surface::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  transform: rotate(45deg);
+  background-image: radial-gradient(
+    var(--dot-color, var(--ink)) 1.4px,
+    transparent 1.5px
+  );
+  background-size: var(--dot-size, 6px) var(--dot-size, 6px);
+  opacity: var(--dot-opacity, 0.18);
+  pointer-events: none;
+  z-index: -1;
+  transition: --dot-size var(--t-base) var(--ease-snap);
+}
+
+/* Chromatic aberration — misregistration, not glow. Drive --chroma. */
+.chroma-text {
+  text-shadow:
+    calc(var(--chroma, 0) * -1px) 0 var(--red),
+    calc(var(--chroma, 0) * 1px) 0 var(--cyan);
+}
+.chroma-el {
+  filter: drop-shadow(calc(var(--chroma, 0) * -1px) 0 var(--red))
+    drop-shadow(calc(var(--chroma, 0) * 1px) 0 var(--cyan));
+}
+
+/* Comic panel: hard offset shadow, never blurred. */
+.panel {
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  border-radius: 2px;
+}
+
+/* Dimension: one class swaps a section's whole palette to the dark comic world
+   (spec §3.8). Token overrides cascade to every child utility. */
+.dimension-dark {
+  --background: var(--void);
+  --surface: var(--deep);
+  --foreground: #f4e8dc;
+  --muted: #c9a7e6;
+  --border: #4a2f6b;
+  --dot-color: rgba(255, 255, 255, 0.1);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Project cards as comic panels with depth-of-field on hover (spec §3.4):
+   the hovered card pulls into focus, siblings defocus (bigger dots, dimmed). */
+.project-card {
+  --dot-size: 10px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  box-shadow: 4px 4px 0 var(--ink);
+  border-radius: 4px;
+  transition:
+    transform var(--t-base) var(--ease-snap),
+    box-shadow var(--t-base) var(--ease-snap),
+    opacity var(--t-base) linear,
+    --dot-size var(--t-base) linear;
+}
+.project-grid:hover .project-card {
+  opacity: 0.5;
+  --dot-size: 16px;
+}
+.project-grid .project-card:hover {
+  opacity: 1;
+  --dot-size: 5px;
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0 var(--pulse);
+}
+
+/* Simulator health states: degraded = warning ring; failing = dimension glitch
+   (scanline tear + cyan/red chroma rip + shake), matching the film's glitch. */
+.sim-panel {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow var(--t-base) var(--ease-snap);
+}
+.sim-panel.is-degraded {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--pulse) 55%, transparent);
+}
+.sim-panel.is-failing {
+  animation: sim-shake 0.28s steps(2, end) infinite;
+}
+.sim-panel.is-failing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 40, 60, 0.09) 0 2px,
+    transparent 2px 5px
+  );
+  box-shadow:
+    inset 0 5px 0 var(--cyan),
+    inset 0 -5px 0 var(--red);
+  mix-blend-mode: screen;
+}
+@keyframes sim-shake {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-1.5px, 1px);
+  }
+  100% {
+    transform: translate(1.5px, -1px);
+  }
+}
+
+/* Button press physics (spec §3.5): flatten on press, overshoot back via snap. */
+[data-press] {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--t-quick) var(--ease-snap),
+    box-shadow var(--t-quick) var(--ease-snap);
+}
+[data-press]:active {
+  transform: scale(0.96);
+}
+
+/* Pointer-origin halftone ripple, spawned on press. */
+.comic-ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background-image: radial-gradient(var(--pulse) 1.6px, transparent 1.7px);
+  background-size: 5px 5px;
+  opacity: 0.6;
+  animation: comic-ripple 0.45s var(--ease-snap) forwards;
+}
+@keyframes comic-ripple {
+  to {
+    transform: scale(20);
+    opacity: 0;
+  }
+}
+
+/* 404 "wrong dimension" (spec Tier 3): comic speed lines converging on the
+   center + a continuous chroma flicker + scanline tear on the big glyph. */
+.speed-lines::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 45%,
+    var(--foreground) 0deg 0.35deg,
+    transparent 0.35deg 3deg
+  );
+  opacity: 0.07;
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 45%,
+    transparent 22%,
+    black 72%
+  );
+  mask-image: radial-gradient(circle at 50% 45%, transparent 22%, black 72%);
+}
+.glitch-404 {
+  position: relative;
+  animation: chroma-flicker 1.2s steps(3, end) infinite;
+}
+.glitch-404::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 40, 60, 0.14) 0 2px,
+    transparent 2px 6px
+  );
+  mix-blend-mode: screen;
+}
+@keyframes chroma-flicker {
+  0%,
+  100% {
+    --chroma: 1;
+  }
+  25% {
+    --chroma: 7;
+  }
+  45% {
+    --chroma: 2;
+  }
+  65% {
+    --chroma: 10;
+  }
+  80% {
+    --chroma: 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch-404 {
+    animation: none;
+    --chroma: 2;
+  }
+  .animate-rise,
+  .animate-float,
+  .sim-panel.is-failing {
+    animation: none;
+  }
+  .reveal-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .rgb-title:hover {
+    text-shadow: none;
+  }
+  :root {
+    --chroma: 0 !important;
+  }
+  [data-press]:active {
+    transform: none;
+  }
+}
+
+/* No-JS fallback: content that relies on scroll-reveal must still be visible. */
+@media (scripting: none) {
+  .reveal-scroll {
+    opacity: 1;
+    transform: none;
+  }
 }
