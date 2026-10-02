@@ -18,6 +18,8 @@ export type Profile = {
   name: string;
   role: string;
   tagline: string;
+  // Hero statement, one short line per entry.
+  headline: string[];
   // Short, warm intro shown under the tagline in the hero.
   intro: string;
   location: string;

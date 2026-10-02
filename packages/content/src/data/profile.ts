@@ -2,11 +2,19 @@ import type { Profile } from "../types";
 
 // SINGLE SOURCE OF TRUTH — edit your details here only.
 // Read everywhere via `getProfile()` from `@/lib/content`.
+// Each line is backed by a case study: the 160M drain, the 20s→3s / 15s→2s
+// performance work, and poison-record isolation.
+const headline = [
+  "Pipelines that hold at scale.",
+  "Frontends that feel instant.",
+  "Data you can trust.",
+];
+
 export const profile: Profile = {
   name: "Aniket Solanki",
   role: "Software Engineer II",
-  tagline:
-    "Data pipelines that don't fall over. Frontends that don't make you wait.",
+  tagline: headline.join(" "),
+  headline,
   intro:
     "3.5+ years at Pluralsight building Kafka and Postgres pipelines on the back end and React on the front. I like getting to the root of a problem, and I care that systems are correct first, then fast.",
   location: "Bengaluru, India",
