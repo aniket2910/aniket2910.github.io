@@ -40,53 +40,18 @@ function CaseStudyCard({ study }: { study: CaseStudy }) {
   );
 }
 
-// Secondary case studies: one line each, so the featured three lead.
-function CaseStudyRow({ study }: { study: CaseStudy }) {
-  const [lead] = study.metrics;
-  return (
-    <Link
-      href={`/case-studies/${study.slug}`}
-      data-transition="THWIP!"
-      className="group flex items-baseline justify-between gap-4 border-t border-border py-4"
-    >
-      <span className="flex flex-col gap-1">
-        <span className="font-medium text-foreground transition-colors group-hover:text-accent">
-          {study.title}
-        </span>
-        <span className="text-sm text-muted">{study.oneLiner}</span>
-      </span>
-      {lead ? (
-        <span className="shrink-0 text-right font-mono text-sm text-foreground">
-          {lead.value}
-          <span className="block text-[11px] text-muted">{lead.label}</span>
-        </span>
-      ) : null}
-    </Link>
-  );
-}
-
 // Professional work, told as case studies with numbers and diagrams.
+// Every study uses the same card; order (featured first) sets priority.
 export function CaseStudies() {
-  const studies = getCaseStudies();
-  const featured = studies.filter((s) => s.featured);
-  const more = studies.filter((s) => !s.featured);
-
   return (
     <Section index="01" title="Case studies" id="case-studies">
       <div className="flex flex-col gap-4">
-        {featured.map((study) => (
+        {getCaseStudies().map((study) => (
           <ScrollReveal key={study.slug}>
             <CaseStudyCard study={study} />
           </ScrollReveal>
         ))}
       </div>
-      {more.length ? (
-        <div className="mt-8">
-          {more.map((study) => (
-            <CaseStudyRow key={study.slug} study={study} />
-          ))}
-        </div>
-      ) : null}
     </Section>
   );
 }
