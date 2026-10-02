@@ -63,11 +63,6 @@ export const profile: Profile = {
         status: "launching soon",
       },
       {
-        title: "System-design simulators",
-        body: "The interactive labs on this site, built around failure modes I've met in production: poison records, rate limiting, idempotency, caching.",
-        status: "live",
-      },
-      {
         title: "A local AI assistant",
         body: "An agent loop with tool calling, a prompt-injection guard and a scope check, running on local models. Next: RAG, LangGraph and evals.",
         status: "building",
