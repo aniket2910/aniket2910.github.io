@@ -20,6 +20,32 @@ export const skills: SkillGroup[] = [
     ],
   },
   {
+    // Built and running in this repo's assistant backend.
+    category: "AI and LLM integration",
+    items: [
+      "OpenAI and Gemini APIs",
+      "Local LLMs (Ollama)",
+      "Tool calling and agent loops",
+      "Guardrails (prompt injection, scope checks)",
+      "Streaming responses",
+      "Provider-agnostic LLM adapters",
+      "Speech-to-text and text-to-speech",
+      "AI-assisted development (Claude Code, Copilot)",
+    ],
+  },
+  {
+    // Studying, not yet built: listed separately on purpose.
+    category: "AI, learning now",
+    items: [
+      "RAG (embeddings, pgvector, hybrid search)",
+      "LangChain, LangGraph, LangSmith",
+      "Claude and OpenAI Agents SDKs",
+      "MCP",
+      "LLM evals and tracing",
+      "Prompt caching and model routing",
+    ],
+  },
+  {
     category: "Architecture",
     items: [
       "Microservices",
