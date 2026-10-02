@@ -19,8 +19,8 @@ export function SiteHeader() {
           <Link href="/#case-studies" className="transition-colors hover:text-foreground">
             case studies
           </Link>
-          <Link href="/#work" className="transition-colors hover:text-foreground">
-            projects
+          <Link href="/#now" className="transition-colors hover:text-foreground">
+            now
           </Link>
           <Link href="/#about" className="hidden transition-colors hover:text-foreground sm:inline">
             about

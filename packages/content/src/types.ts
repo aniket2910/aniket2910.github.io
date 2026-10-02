@@ -17,12 +17,12 @@ export type Metric = {
 export type Profile = {
   name: string;
   role: string;
+  // Previous company, shown next to the role (e.g. "ex-Pluralsight").
+  formerly?: string;
   tagline: string;
   // Hero statement, one short line per entry, plus the line that answers it.
   headline: string[];
   headlineNote: string;
-  // Short, warm intro shown under the tagline in the hero.
-  intro: string;
   location: string;
   summary: string;
   // Character-forward "about" paragraph, in Aniket's own voice.
@@ -34,8 +34,6 @@ export type Profile = {
   email: string;
   socials: Social[];
   headlineMetrics: Metric[];
-  // "What I build" tiles shown under the hero.
-  focusAreas: FocusArea[];
   // What I'm building right now.
   now: { intro: string; items: NowItem[] };
 };
@@ -46,10 +44,6 @@ export type NowItem = {
   status: string; // short label, e.g. "live", "launching soon"
 };
 
-export type FocusArea = {
-  title: string;
-  body: string;
-};
 
 export type Experience = {
   company: string;

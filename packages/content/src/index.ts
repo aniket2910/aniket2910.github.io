@@ -69,7 +69,6 @@ export type {
   Experience,
   FlowRow,
   FlowStep,
-  FocusArea,
   Metric,
   NowItem,
   Profile,

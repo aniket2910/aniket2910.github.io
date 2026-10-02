@@ -14,7 +14,7 @@ export function stubAnswer(question: string): string {
   const has = (...keys: string[]) => keys.some((k) => q.includes(k));
 
   if (has("your name", "who are you", "introduce")) {
-    return `I'm ${p.name}, a ${p.role} based in ${p.location}. ${p.intro}`;
+    return `I'm ${p.name}, a ${p.role} based in ${p.location}. ${p.summary}`;
   }
   if (has("experience", "worked", "work at", "job", "career", "pluralsight")) {
     return summarizeExperience();

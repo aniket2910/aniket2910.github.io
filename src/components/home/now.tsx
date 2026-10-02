@@ -7,7 +7,7 @@ export function Now() {
   const { now } = getProfile();
 
   return (
-    <Section index="03" title="Now" id="now">
+    <Section index="02" title="Now" id="now">
       <p className="mb-6 max-w-xl text-base leading-relaxed text-foreground">
         {now.intro}
       </p>

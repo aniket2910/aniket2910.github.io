@@ -7,20 +7,19 @@ import type { Profile } from "../types";
 const headline = [
   "Why does it break?",
   "How will it scale?",
-  "What does the business actually need?",
+  "What does the business need?",
 ];
 const headlineNote =
-  "I answer those first, then build it, with AI in my toolkit and judgment in charge.";
+  "I start with those questions, then build. AI speeds up the work; the decisions stay mine.";
 
 export const profile: Profile = {
   name: "Aniket Solanki",
-  role: "Software Engineer II",
+  role: "Full-stack engineer",
+  formerly: "ex-Pluralsight",
   tagline: `${headline.join(" ")} ${headlineNote}`,
   headline,
   headlineNote,
-  intro:
-    "3.5+ years at Pluralsight building Kafka and Postgres pipelines on the back end and React on the front. Correct first, then fast.",
-  location: "Bengaluru, India",
+  location: "Bengaluru",
   summary:
     "Software engineer with 3.5+ years shipping full-stack products end to end. React and TypeScript on the front, Node.js and event-driven services on the back. I like owning a feature from an empty screen to the pixels a user touches, and I care just as much about the system underneath it.",
   about:
@@ -75,22 +74,4 @@ export const profile: Profile = {
       },
     ],
   },
-  focusAreas: [
-    {
-      title: "Event-driven pipelines",
-      body: "Kafka streams into Postgres, drained in bounded batches that survive redeploys and keep memory flat.",
-    },
-    {
-      title: "Data correctness",
-      body: "Idempotent writes, poison-record isolation, and one rule: never show a wrong number as a right one.",
-    },
-    {
-      title: "Frontend performance",
-      body: "Fewer re-renders, smaller bundles, and shared components built to be used by 15+ teams.",
-    },
-    {
-      title: "AI-integrated systems",
-      body: "Tool-calling agent loops with guardrails and scope checks. Built locally, and still going deeper.",
-    },
-  ],
 };

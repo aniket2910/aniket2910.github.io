@@ -5,8 +5,9 @@ import { MetricsRow } from "./metrics-row";
 
 // Landing: warm, confident, credible. Elements enter in a staggered sequence.
 export function Hero() {
-  const { name, role, headline, headlineNote, intro, location, headlineMetrics } =
+  const { name, role, formerly, headline, headlineNote, location, headlineMetrics } =
     getProfile();
+  const eyebrow = [role, formerly, location].filter(Boolean).join(" · ");
 
   return (
     <Container className="py-16 sm:py-24">
@@ -20,7 +21,7 @@ export function Hero() {
               className="animate-rise font-mono text-xs uppercase tracking-wide text-accent"
               style={{ animationDelay: "100ms" }}
             >
-              {role} · {location}
+              {eyebrow}
             </p>
             <h1
               className="chroma-text animate-rise font-display text-4xl uppercase tracking-tight sm:text-6xl"
@@ -28,7 +29,7 @@ export function Hero() {
             >
               {name}
             </h1>
-            <p className="flex flex-col text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-3xl">
+            <p className="flex flex-col text-[22px] font-semibold leading-tight tracking-tight text-foreground sm:text-3xl">
               {headline.map((line, i) => (
                 <span
                   key={line}
@@ -48,13 +49,6 @@ export function Hero() {
           </div>
         </div>
 
-        <p
-          className="animate-rise max-w-xl text-base leading-relaxed text-muted"
-          style={{ animationDelay: "440ms" }}
-        >
-          {intro}
-        </p>
-
         <div
           className="animate-rise flex flex-wrap gap-3"
           style={{ animationDelay: "560ms" }}
@@ -67,11 +61,11 @@ export function Hero() {
             Read case studies
           </a>
           <a
-            href="#work"
+            href="#now"
             data-press
             className="rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
           >
-            Projects
+            What I&apos;m building
           </a>
         </div>
 
