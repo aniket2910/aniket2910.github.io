@@ -43,6 +43,27 @@ export const profile: Profile = {
     { value: "15+", label: "Teams on my Table pagination", sub: "shared design system" },
     { value: "85%", label: "Faster first load", sub: "~20s → ~3s" },
   ],
+  now: {
+    intro:
+      "Since April 2026 I've been building full time, and going deeper on the AI stack.",
+    items: [
+      {
+        title: "Minimally",
+        body: "A privacy-first personal finance tracker. Data lives on the device by default; cloud backup is end-to-end encrypted, so the server only ever stores ciphertext. React, IndexedDB, NestJS, PostgreSQL.",
+        status: "launching soon",
+      },
+      {
+        title: "System-design simulators",
+        body: "The interactive labs on this site, built around failure modes I've met in production: poison records, rate limiting, idempotency, caching.",
+        status: "live",
+      },
+      {
+        title: "A local AI assistant",
+        body: "An agent loop with tool calling, a prompt-injection guard and a scope check, running on local models. Next: RAG, LangGraph and evals.",
+        status: "building",
+      },
+    ],
+  },
   focusAreas: [
     {
       title: "Event-driven pipelines",

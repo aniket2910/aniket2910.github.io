@@ -195,7 +195,7 @@ export const caseStudies: CaseStudy[] = [
     context:
       "Pluralsight · Software Engineer I · Curriculum Tool · PostgreSQL, Node.js, React",
     year: "2023",
-    featured: false,
+    featured: true,
     tags: ["Performance", "PostgreSQL", "Pre-aggregation", "React"],
     metrics: [
       { value: "87%", label: "latency cut", sub: "15s → 2s" },
@@ -267,5 +267,173 @@ export const caseStudies: CaseStudy[] = [
       "Latency paid on every request is a design choice. Moving the aggregation onto a schedule traded to-the-second freshness, which this dashboard never needed, for a 2-second load.",
     nextTime:
       "Measure backend and frontend time separately before and after, so the 87% splits into numbers instead of a judgement call.",
+  },
+  {
+    slug: "react-app-instant",
+    title: "Making a React app feel instant",
+    oneLiner:
+      "First load dropped from ~20s to ~3s, and the busiest form stopped re-rendering top to bottom on every single edit.",
+    context:
+      "Pluralsight · Software Engineer II · React, TypeScript, Redux, Webpack",
+    year: "2025",
+    featured: false,
+    tags: ["Frontend performance", "React", "Redux", "Code splitting"],
+    metrics: [
+      { value: "85%", label: "faster first load", sub: "~20s → ~3s" },
+      { value: "~40%", label: "fewer re-renders", sub: "on the editing surface" },
+    ],
+    situation:
+      "Two kinds of slow in one product. The first page took around 20 seconds to render. And on the content-editing surface, a metadata form that grew with every new content type re-rendered from top to bottom whenever a single field changed, because every input subscribed to one shared Context.",
+    points: [
+      {
+        label: "Measure before cutting",
+        body: "Lighthouse and bundle analysis showed what the first load was actually waiting on across SSR and the client bundle, so the work went to the critical path instead of guesses.",
+      },
+      {
+        label: "Ship only what the route needs",
+        body: "Route-level code splitting, dynamic imports for heavy and rarely used parts, and Webpack chunk optimization so shared dependencies cache separately. Initial render went from ~20s to ~3s.",
+      },
+      {
+        label: "Subscribe to slices, not the world",
+        body: "A Context provider re-renders every consumer when any part of its value changes. Moving state to Redux with useSelector means a field re-renders only when its own slice changes. The React DevTools Profiler showed ~40% fewer committed renders on the same interaction.",
+      },
+      {
+        label: "One owner for async",
+        body: "Redux Saga took over fetching, cancellation and sequencing. takeLatest cancels a stale request when a newer one fires, which removed out-of-order responses on fast interactions.",
+      },
+      {
+        label: "Migrated without a big bang",
+        body: "Redux and Context ran side by side; one slice moved at a time, verified in the Profiler, then its Context was deleted. The app stayed shippable at every step.",
+      },
+    ],
+    flow: {
+      title: "First load and a single edit, before and after",
+      rows: [
+        {
+          label: "First load · before",
+          steps: [
+            { title: "Browser" },
+            { title: "One large bundle", sub: "everything up front", tone: "bad" },
+            { title: "~20s", sub: "to first render", tone: "bad" },
+          ],
+        },
+        {
+          label: "First load · after",
+          steps: [
+            { title: "Browser" },
+            { title: "Route chunk", sub: "only this page" },
+            { title: "Lazy chunks", sub: "loaded on demand" },
+            { title: "~3s", sub: "to first render", tone: "ok" },
+          ],
+        },
+        {
+          label: "One edit · before",
+          steps: [
+            { title: "Field change" },
+            { title: "Shared Context", sub: "value reference changes" },
+            { title: "Whole form re-renders", tone: "bad" },
+          ],
+        },
+        {
+          label: "One edit · after",
+          steps: [
+            { title: "Field change" },
+            { title: "Redux slice", sub: "useSelector" },
+            { title: "Only that field re-renders", tone: "ok" },
+          ],
+        },
+      ],
+    },
+    tradeoffs: [
+      {
+        option: "Wrap everything in React.memo",
+        verdict: "Lowers render cost, but every consumer of a changing Context still re-renders. The subscription model was the problem.",
+      },
+      {
+        option: "RTK Query for data fetching",
+        verdict: "The modern default for fetch-and-cache, and my pick on a greenfield app. Saga won here for cancellation and sequencing, and it was already the pattern in the codebase.",
+      },
+    ],
+    insight:
+      "Count before you cut. Bundle analysis showed what the first load waited on, and the Profiler showed one edit re-rendering a whole form. Both fixes did less work rather than the same work faster.",
+  },
+  {
+    slug: "building-for-15-teams",
+    title: "Building for 15+ teams at once",
+    oneLiner:
+      "A shared Table that choked on large datasets, and a frontend that had to ship on its own among 30+ teams. Both came down to changing shared things without breaking anyone.",
+    context:
+      "Pluralsight · Software Engineer II · React, design system, Kubernetes",
+    year: "2025",
+    featured: false,
+    tags: ["Design systems", "Micro-frontends", "React", "API design"],
+    metrics: [
+      { value: "15+", label: "teams adopted", sub: "server-side pagination" },
+      { value: "30+", label: "teams on the platform", sub: "independent deploys" },
+    ],
+    situation:
+      "The product is many independently deployed frontends under one domain, built on a shared design system. The design-system Table paginated only in the browser, so a large dataset had to load in full before the first row appeared. Teams needed server-side pagination, and my team needed to ship its own frontend without coordinating releases with anyone else.",
+    points: [
+      {
+        label: "Server-side pagination, opt-in",
+        body: "Added offset/limit API pagination with next and previous controls behind opt-in props. Existing callers change nothing; teams with large datasets switch it on.",
+      },
+      {
+        label: "Same API, same accessibility",
+        body: "The Table stayed composable and accessible, so adopting pagination never meant relearning the component.",
+      },
+      {
+        label: "Documented where teams look",
+        body: "Every new prop is documented in the shared component library, which is how it reached 15+ teams without a migration plan.",
+      },
+      {
+        label: "A frontend that ships on its own",
+        body: "Built and deployed my team's React micro-frontend as a standalone unit with its own backend, composed by route at the Kubernetes Ingress with fully isolated browser state.",
+      },
+    ],
+    flow: {
+      title: "Shared Table and the micro-frontend platform",
+      rows: [
+        {
+          label: "Table · before",
+          steps: [
+            { title: "Table" },
+            { title: "Load full dataset", sub: "before the first row", tone: "bad" },
+            { title: "Paginate in browser" },
+          ],
+        },
+        {
+          label: "Table · after, opt-in",
+          steps: [
+            { title: "Table" },
+            { title: "API offset / limit", sub: "next · previous" },
+            { title: "One page of rows", tone: "ok" },
+          ],
+        },
+        {
+          label: "Platform",
+          steps: [
+            { title: "Browser", sub: "one domain" },
+            { title: "Kubernetes Ingress", sub: "routes by path" },
+            { title: "Team frontend", sub: "own deploy" },
+            { title: "Team backend", sub: "data synced over Kafka", tone: "ok" },
+          ],
+        },
+      ],
+      caption:
+        "Teams are composed by route rather than inside one shared app: a full page load between teams, in exchange for hard isolation and independent releases.",
+    },
+    tradeoffs: [
+      {
+        option: "Change the Table's API outright",
+        verdict: "Forces every consuming team to migrate at once. Opt-in props let each team adopt on its own schedule.",
+      },
+      {
+        option: "Keep paginating in the browser",
+        verdict: "The first row waits for the whole dataset, and memory grows with the data.",
+      },
+    ],
+    insight:
+      "Shared code is a contract. Making new behaviour opt-in let 15+ teams adopt server-side pagination on their own schedule, with no coordinated migration.",
   },
 ];

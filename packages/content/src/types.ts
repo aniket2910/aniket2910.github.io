@@ -33,6 +33,14 @@ export type Profile = {
   headlineMetrics: Metric[];
   // "What I build" tiles shown under the hero.
   focusAreas: FocusArea[];
+  // What I'm building right now.
+  now: { intro: string; items: NowItem[] };
+};
+
+export type NowItem = {
+  title: string;
+  body: string;
+  status: string; // short label, e.g. "live", "launching soon"
 };
 
 export type FocusArea = {

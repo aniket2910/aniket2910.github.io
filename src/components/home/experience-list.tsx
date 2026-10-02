@@ -9,7 +9,7 @@ export function ExperienceList() {
   const last = experience.length - 1;
 
   return (
-    <Section index="03" title="Experience">
+    <Section index="04" title="Experience">
       <div className="flex flex-col">
         {experience.map((job, i) => (
           <div key={`${job.title}-${job.period}`} className="flex gap-4">

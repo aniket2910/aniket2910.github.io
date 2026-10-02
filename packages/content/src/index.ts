@@ -71,6 +71,7 @@ export type {
   FlowStep,
   FocusArea,
   Metric,
+  NowItem,
   Profile,
   Project,
   ProjectKind,
