@@ -2,21 +2,24 @@ import type { Profile } from "../types";
 
 // SINGLE SOURCE OF TRUTH — edit your details here only.
 // Read everywhere via `getProfile()` from `@/lib/content`.
-// Each line is backed by a case study: the 160M drain, the 20s→3s / 15s→2s
-// performance work, and poison-record isolation.
+// The what / why / how questions I start every problem with. The case
+// studies are the answers.
 const headline = [
-  "Pipelines that hold at scale.",
-  "Frontends that feel instant.",
-  "Data you can trust.",
+  "Why does it break?",
+  "How will it scale?",
+  "What does the business actually need?",
 ];
+const headlineNote =
+  "I answer those first, then build it, with AI in my toolkit and judgment in charge.";
 
 export const profile: Profile = {
   name: "Aniket Solanki",
   role: "Software Engineer II",
-  tagline: headline.join(" "),
+  tagline: `${headline.join(" ")} ${headlineNote}`,
   headline,
+  headlineNote,
   intro:
-    "3.5+ years at Pluralsight building Kafka and Postgres pipelines on the back end and React on the front. I like getting to the root of a problem, and I care that systems are correct first, then fast.",
+    "3.5+ years at Pluralsight building Kafka and Postgres pipelines on the back end and React on the front. Correct first, then fast.",
   location: "Bengaluru, India",
   summary:
     "Software engineer with 3.5+ years shipping full-stack products end to end. React and TypeScript on the front, Node.js and event-driven services on the back. I like owning a feature from an empty screen to the pixels a user touches, and I care just as much about the system underneath it.",

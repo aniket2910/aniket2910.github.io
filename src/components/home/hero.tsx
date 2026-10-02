@@ -5,7 +5,7 @@ import { MetricsRow } from "./metrics-row";
 
 // Landing: warm, confident, credible. Elements enter in a staggered sequence.
 export function Hero() {
-  const { name, role, headline, intro, location, headlineMetrics } =
+  const { name, role, headline, headlineNote, intro, location, headlineMetrics } =
     getProfile();
 
   return (
@@ -38,6 +38,12 @@ export function Hero() {
                   {line}
                 </span>
               ))}
+            </p>
+            <p
+              className="animate-rise max-w-md text-base leading-relaxed text-muted"
+              style={{ animationDelay: `${320 + headline.length * 90}ms` }}
+            >
+              {headlineNote}
             </p>
           </div>
         </div>
