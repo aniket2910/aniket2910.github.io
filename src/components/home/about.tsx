@@ -8,7 +8,7 @@ export function About() {
   const skills = getSkills();
 
   return (
-    <Section index="03" title="About" id="about">
+    <Section index="04" title="About" id="about">
       <ScrollReveal>
         <p className="max-w-2xl text-lg leading-relaxed text-foreground">
           {about}

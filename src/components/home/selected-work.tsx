@@ -11,7 +11,7 @@ export function SelectedWork() {
   );
 
   return (
-    <Section index="01" title="Projects" id="work" tone="dark">
+    <Section index="02" title="Projects" id="work" tone="dark">
       <ArriveSfx />
       <div className="project-grid flex flex-col gap-4">
         {projects.map((p, i) => (

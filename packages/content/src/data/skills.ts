@@ -1,4 +1,4 @@
-import type { SkillGroup } from "@/lib/content/types";
+import type { SkillGroup } from "../types";
 
 // SINGLE SOURCE OF TRUTH — skills. Read via `getSkills()`.
 export const skills: SkillGroup[] = [

@@ -1,4 +1,4 @@
-import type { Project } from "@/lib/content";
+import type { Project } from "../types";
 
 // SINGLE SOURCE OF TRUTH — personal projects (interactive systems labs and
 // self-built work). Pluralsight work lives under Experience, not here.

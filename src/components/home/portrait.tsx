@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getProfile } from "@/lib/content";
+import { withBasePath } from "@/lib/base-path";
 
 // The pre-stylized comic portrait, frameless, with a gentle float.
 export function Portrait() {
@@ -13,7 +14,7 @@ export function Portrait() {
     <div className="animate-float relative h-36 w-36 shrink-0 sm:h-44 sm:w-44">
       {photoUrl ? (
         <Image
-          src={photoUrl}
+          src={withBasePath(photoUrl)}
           alt={name}
           fill
           priority

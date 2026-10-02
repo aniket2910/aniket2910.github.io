@@ -15,11 +15,14 @@ export function SiteHeader() {
         >
           {name.toLowerCase().replace(/\s+/g, ".")}
         </Link>
-        <nav className="flex items-center gap-4 font-mono text-xs text-muted">
-          <Link href="/#work" className="transition-colors hover:text-foreground">
-            work
+        <nav className="flex items-center gap-3 whitespace-nowrap font-mono text-xs text-muted sm:gap-4">
+          <Link href="/#case-studies" className="transition-colors hover:text-foreground">
+            case studies
           </Link>
-          <Link href="/#about" className="transition-colors hover:text-foreground">
+          <Link href="/#work" className="transition-colors hover:text-foreground">
+            projects
+          </Link>
+          <Link href="/#about" className="hidden transition-colors hover:text-foreground sm:inline">
             about
           </Link>
           <ThemeToggle />

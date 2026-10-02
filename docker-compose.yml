@@ -1,0 +1,100 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# LOCAL AI MODEL STACK (Phase 0) — every model runs in Docker; the Mac only runs
+# the Next.js dev app, which talks to these over localhost. Same images run
+# GPU-accelerated on a Linux host in prod (dev/prod parity, zero code change).
+#
+# Services (all OpenAI-compatible so one client drives them):
+#   llm  : Ollama            → http://localhost:11434/v1   (qwen2.5:3b)
+#   stt  : faster-whisper    → http://localhost:8001/v1    (whisper small)
+#   tts  : kokoro-fastapi    → http://localhost:8002/v1    (Kokoro)
+#
+# Apple Silicon note: Docker has no GPU passthrough, so inference is CPU-only
+# here. That's the accepted cost of the container-only constraint; keep models
+# SMALL (3B LLM, whisper-small, Kokoro-82M). Give Docker Desktop ≥10GB RAM
+# (Settings → Resources) so the LLM isn't OOM-killed mid-answer.
+#
+# Run:
+#   docker compose up -d              # pulls images + the model (a few GB, once)
+#   docker compose logs -f llm-init   # watch the model download finish
+#   docker compose ps                 # health of each service
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: portfolio-voice
+
+services:
+  # ── LLM (brain) ─────────────────────────────────────────────────────────────
+  llm:
+    image: ollama/ollama:latest
+    container_name: voice-llm
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks: [voice-net]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  # One-shot: waits for the LLM server, pulls the model into its volume, exits.
+  # Makes the model available with no manual `ollama pull` step.
+  llm-init:
+    image: ollama/ollama:latest
+    container_name: voice-llm-init
+    depends_on:
+      llm:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://llm:11434
+    entrypoint: ["/bin/sh", "-c", "ollama pull ${OLLAMA_MODEL:-qwen2.5:3b} && echo 'model ready'"]
+    networks: [voice-net]
+    restart: "no"
+
+  # ── STT (ears) ──────────────────────────────────────────────────────────────
+  # faster-whisper-server (OpenAI-compatible /v1/audio/transcriptions). Legacy
+  # tag of what's now "Speaches"; fine for local. Swap image → no app change.
+  stt:
+    image: fedirz/faster-whisper-server:latest-cpu
+    container_name: voice-stt
+    ports:
+      - "8001:8000"
+    environment:
+      - WHISPER__MODEL=Systran/faster-whisper-small
+    volumes:
+      - whisper-cache:/root/.cache/huggingface
+    networks: [voice-net]
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    restart: unless-stopped
+
+  # ── TTS (mouth) ─────────────────────────────────────────────────────────────
+  # kokoro-fastapi (OpenAI-compatible /v1/audio/speech). Swap to Piper later by
+  # changing this image + TTS_URL — the app is unaffected.
+  tts:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+    container_name: voice-tts
+    ports:
+      - "8002:8880"
+    networks: [voice-net]
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8880/health')\" || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    restart: unless-stopped
+
+networks:
+  voice-net:
+    driver: bridge
+
+volumes:
+  ollama-data:
+  whisper-cache:

@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { stripBasePath } from "@/lib/base-path";
 
 type Phase = "idle" | "cover" | "reveal";
 
@@ -48,7 +49,8 @@ export function ComicTransition({ children }: { children: ReactNode }) {
 
   function onEnd() {
     if (phase === "cover" && pending.current) {
-      router.push(pending.current);
+      // The DOM href already includes the base path; router.push adds it again.
+      router.push(stripBasePath(pending.current));
       pending.current = null;
       // Fallback: never stay stuck covering if the route change is missed.
       window.setTimeout(

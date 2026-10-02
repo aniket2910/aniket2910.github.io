@@ -1,4 +1,4 @@
-import type { Experience } from "@/lib/content/types";
+import type { Experience } from "../types";
 
 // SINGLE SOURCE OF TRUTH — work history. Read via `getExperience()`.
 export const experience: Experience[] = [
@@ -11,8 +11,12 @@ export const experience: Experience[] = [
     highlights: [
       "Built a fault-tolerant batch job aggregating live Kafka data from 7+ upstream teams into a single reporting table; per-record failure isolation keeps one bad record from failing the batch, holding 100% data integrity on live traffic without vertical scaling.",
       "Resolved a high-priority Kafka consumer bug causing incorrect viewership data in the Author Tool, and hardened the pipeline against upstream null values to prevent recurring data-integrity issues.",
-      "Migrated state management from Context API to Redux Saga, cutting unnecessary re-renders 40% and making data-fetching predictable across the app.",
+      "Migrated the content-editing surface from Context API to Redux, with slice-level useSelector subscriptions cutting unnecessary re-renders ~40% and Redux Saga giving async data-fetching one predictable owner.",
+      "Cut initial page render from ~20s to ~3s (85%) by diagnosing SSR and bundle bottlenecks with Lighthouse and bundle analysis, then applying route-level code splitting, dynamic imports, and Webpack chunk optimization.",
+      "Added opt-in server-side pagination to the shared design-system Table component, removing its client-side data ceiling while keeping the composable, accessible API; documented in the component library and adopted by 15+ teams.",
+      "Built and independently deployed my team's React micro-frontend as one of 30+ engineering teams on a single-domain platform, composed by route at the Kubernetes Ingress with fully isolated browser state.",
       "Acted as tech lead for a 3-engineer team across 4 sprints, running planning and standups, clearing P1/P2 blockers, and keeping delivery on schedule while still shipping my own work.",
+      "Partnered with an internal AI team and curriculum managers to define requirements for, and integrate, an LLM-based content-categorization tool into the curriculum portal, replacing manual spreadsheet tag-mapping.",
       "Designed a dual-credential, least-privilege access strategy (separate scoped connections per schema) that kept cross-team data flowing after an org-wide security policy locked down direct schema access.",
       "Built a feature-flagged self-service onboarding portal (React/Node) that replaced manual ops and back-and-forth Slack coordination.",
       "Strengthened production observability with New Relic, Grafana dashboards, OpsGenie incident workflows, and structured logging.",
@@ -25,7 +29,7 @@ export const experience: Experience[] = [
     location: "Bengaluru",
     scope: "Curriculum Tool",
     highlights: [
-      "Built the \"Top 10 Courses\" analytics pipeline on Kafka (160M+ records), scaling processing throughput 100× (100 → 10,000 rec/min) and clearing recurring on-call memory alerts.",
+      "Built the enrichment stage of the \"Top 10 Courses\" analytics pipeline: drained a 160M+ record Kafka-fed backlog at ~10,000 records/min with resumable flag-based paging and bounded batches, clearing recurring on-call memory alerts.",
       "Cut a key dashboard's response time from 15s to 2s (87%) by replacing a heavy materialized view with scheduled pre-aggregated tables, and streamlining state and rendering on the frontend.",
       "Built a custom React/Node control panel to dynamically manage background cron jobs, eliminating pod restarts and YAML deploys for job toggling.",
       "Built the Content Freshness Workflow, an interactive, accessible UI visualizing content-categorization signals and top-viewed courses.",
