@@ -8,7 +8,9 @@ import { experience } from "./data/experience";
 import { projects } from "./data/projects";
 import { skills } from "./data/skills";
 import { caseStudies } from "./data/case-studies";
+import { activity } from "./data/activity";
 import type {
+  Activity,
   CaseStudy,
   Experience,
   Profile,
@@ -64,7 +66,14 @@ export function getCaseStudySlugs(): string[] {
   return caseStudies.map((c) => c.slug);
 }
 
+// Last year of GitHub + LeetCode activity, merged per day.
+export function getActivity(): Activity {
+  return activity;
+}
+
 export type {
+  Activity,
+  ActivityDay,
   CaseStudy,
   Experience,
   FlowRow,

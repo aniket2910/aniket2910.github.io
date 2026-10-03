@@ -1,4 +1,5 @@
-# Builds the static site and publishes it to GitHub Pages on every push to main.
+# Builds the static site and publishes it to GitHub Pages on every push to main,
+# and nightly so the activity plates (GitHub + LeetCode) stay current.
 # One-time setup: repo Settings → Pages → Source: "GitHub Actions".
 name: Deploy to GitHub Pages
 
@@ -6,6 +7,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "30 0 * * *" # 06:00 IST
 
 permissions:
   contents: read
@@ -35,6 +38,12 @@ jobs:
       - run: npm ci
 
       - run: npm run lint
+
+      # Refreshes packages/content/src/data/activity.ts; keeps the committed
+      # snapshot if GitHub or LeetCode is unreachable.
+      - run: npm run activity
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: npm run build
         env:

@@ -526,6 +526,54 @@ summary,
   }
 }
 
+/* Activity plates: a year printed on two misregistered ink plates. GitHub on
+   cyan, LeetCode on pink, overlap reads as the shared purple. Scroll velocity
+   (--chroma) pushes the plates apart; hover snaps them into register. */
+.plates {
+  --plate: calc(2.5px + var(--chroma, 0) * 0.6px);
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--pulse);
+}
+.plates svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.plate-gh {
+  fill: var(--cyan);
+  mix-blend-mode: multiply;
+}
+.plate-lc {
+  fill: var(--pulse);
+  mix-blend-mode: multiply;
+  transform: translate(var(--plate), calc(var(--plate) * -0.6));
+  transition: transform 0.35s steps(4);
+}
+.plates:hover .plate-lc {
+  transform: none;
+}
+.plate-hit {
+  fill: transparent;
+}
+.plate-hit:hover {
+  stroke: var(--ink);
+  stroke-width: 0.6;
+}
+.plate-sfx {
+  font-family: var(--font-sfx);
+  fill: var(--pulse);
+  stroke: var(--ink);
+  stroke-width: 0.8;
+  paint-order: stroke;
+  letter-spacing: 0.04em;
+}
+.plate-gh-text {
+  color: #0a87a6;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .glitch-404 {
     animation: none;
@@ -546,6 +594,12 @@ summary,
   }
   :root {
     --chroma: 0 !important;
+  }
+  .plates {
+    --plate: 0px;
+  }
+  .plate-lc {
+    transition: none;
   }
   [data-press]:active {
     transform: none;

@@ -11,7 +11,8 @@
     "dev": "next dev",
     "prebuild": "npm run build -w @portfolio/content",
     "build": "next build",
-    "lint": "eslint"
+    "lint": "eslint",
+    "activity": "node scripts/fetch-activity.mjs"
   },
   "dependencies": {
     "@portfolio/content": "*",

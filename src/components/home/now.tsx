@@ -1,6 +1,7 @@
-import { getProfile } from "@/lib/content";
+import { getActivity, getProfile } from "@/lib/content";
 import { Section } from "@/components/ui/section";
 import { ScrollReveal } from "@/components/fx/scroll-reveal";
+import { ActivityPlates } from "./activity-plates";
 
 // What I'm building right now: keeps the page current between roles.
 export function Now() {
@@ -26,6 +27,9 @@ export function Now() {
           </ScrollReveal>
         ))}
       </div>
+      <ScrollReveal className="mt-10">
+        <ActivityPlates activity={getActivity()} />
+      </ScrollReveal>
     </Section>
   );
 }

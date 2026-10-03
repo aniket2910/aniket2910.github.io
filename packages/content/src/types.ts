@@ -115,3 +115,14 @@ export type SkillGroup = {
   category: string;
   items: string[];
 };
+
+// One day of public activity: GitHub contributions + LeetCode submissions.
+export type ActivityDay = { date: string; gh: number; lc: number };
+
+// Generated at build time by scripts/fetch-activity.mjs.
+export type Activity = {
+  generatedAt: string;
+  // LeetCode problems solved, by difficulty.
+  solved: { total: number; easy: number; medium: number; hard: number };
+  days: ActivityDay[];
+};
