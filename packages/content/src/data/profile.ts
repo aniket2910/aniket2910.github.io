@@ -42,6 +42,11 @@ export const profile: Profile = {
       handle: "solanki-aniket0411",
     },
     {
+      label: "LeetCode",
+      href: "https://leetcode.com/u/solankianiket0411/",
+      handle: "solankianiket0411",
+    },
+    {
       label: "Email",
       href: "mailto:solankianiket0411@gmail.com",
       handle: "solankianiket0411@gmail.com",
